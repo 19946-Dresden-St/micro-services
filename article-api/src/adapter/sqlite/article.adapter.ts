@@ -11,7 +11,7 @@ import { Article } from 'src/entities/article';
 import { GrpcUserAdapter } from '../grpc/user.adapter';
 
 @Injectable()
-export class UserSqliteAdapter implements ArticleRepository {
+export class ArticleSqliteAdapter implements ArticleRepository {
   constructor(
     private prisma: PrismaService,
     @Inject(GrpcUserAdapter)
