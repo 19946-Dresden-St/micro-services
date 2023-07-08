@@ -1,4 +1,4 @@
-# docker build -t article-api .
+# docker build -t auth-api .
 
 FROM node:20-alpine
 
@@ -7,7 +7,6 @@ WORKDIR /build
 RUN npm install -g prisma
 
 ENV DATABASE_URL="file:./dev.db"
-ENV AUTH_API_URL="auth-api:4000"
 
 COPY package.json .
 COPY package-lock.json .
@@ -26,6 +25,7 @@ RUN npx prisma migrate dev --name init
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 4000
+EXPOSE 4001
 
 CMD [ "npm" ,"run", "start" ]
