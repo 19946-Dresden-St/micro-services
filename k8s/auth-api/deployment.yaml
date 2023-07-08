@@ -2,33 +2,32 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: article-api
-  name: article-api
+    app: auth-api
+  name: auth-api
 spec:
   selector:
     matchLabels:
-      app: article-api
+      app: auth-api
   template:
     metadata:
       labels:
-        app: article-api
+        app: auth-api
     spec:
       containers:
-      - name: article-api
-        image: alorin/article-api:0.0.2
-        env:
-        - name: AUTH_API_URL
-          value: auth-api-svc:4000
+      - name: auth-api
+        image: alorin/auth-api:0.0.3
         resources:
           requests:
             cpu: "128m"
         ports:
-        - containerPort: 3000
+        - containerPort: 4001
+          protocol: TCP
+        - containerPort: 4000
           protocol: TCP
         readinessProbe:
           httpGet:
-            port: 3000
-            path: /article
+            port: 4001
+            path: /user
         volumeMounts:
         - mountPath: /proto/user/v1alpha
           name: proto

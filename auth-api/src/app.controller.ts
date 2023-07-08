@@ -27,6 +27,7 @@ export class AppController {
     private readonly userService: UserRepository,
   ) {}
 
+  @Get()
   @GrpcMethod(USER_SERVICE_NAME, 'FindAll')
   async getUsers(): Promise<FindAllResponse> {
     return {
@@ -34,6 +35,7 @@ export class AppController {
     };
   }
 
+  @Get('/:id')
   @GrpcMethod(USER_SERVICE_NAME, 'Find')
   async getUser({ id }: FindRequest): Promise<FindResponse> {
     return {

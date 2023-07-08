@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proto-file
+data:
+  user.proto: |
+    syntax = "proto3";
+
+    package auth.v1alpha;
+
+    service UserService {
+      rpc FindAll(FindAllRequest) returns (FindAllResponse);
+      rpc Find(FindRequest) returns (FindResponse);
+      rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
+      rpc Register(RegisterRequest) returns (RegisterResponse);
+    }
+
+    message User {
+      int32 id = 1;
+      string email = 2;
+    }
+
+    message RegisterRequest {
+      string password = 1;
+      string email = 2;
+    }
+
+    message RegisterResponse {
+      User user = 1;
+    }
+
+    message FindAllRequest {
+    }
+
+    message FindRequest {
+      int32 id = 1;
+    }
+
+    message FindAllResponse {
+      repeated User users = 1;
+    }
+
+    message FindResponse {
+      User user = 1;
+    }
+
+    message CheckTokenRequest {
+      string token = 1;
+    }
+
+    message CheckTokenResponse {
+      enum STATUS {
+        OK = 0;
+        WRONG_PASSWORD = 1;
+        NOT_FOUND = 2;
+        INTERNAL = 3;
+      }
+      User user = 1;
+    }
+  

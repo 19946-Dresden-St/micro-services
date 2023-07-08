@@ -20,6 +20,6 @@ async function bootstrap() {
     },
   );
 
-  await Promise.all([app.listen(), appHttp.listen(4001)]);
+  await Promise.all([app.listen(), appHttp.listen(4001, '0.0.0.0')]);
 }
 bootstrap();
