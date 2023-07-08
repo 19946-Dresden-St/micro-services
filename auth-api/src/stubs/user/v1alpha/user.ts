@@ -34,17 +34,15 @@ export interface FindResponse {
   user?: User;
 }
 
-export interface CheckPasswordRequest {
-  email?: string;
-  password?: string;
+export interface CheckTokenRequest {
+  token?: string;
 }
 
-export interface CheckPasswordResponse {
-  status?: CheckPasswordResponse_STATUS;
+export interface CheckTokenResponse {
   user?: User;
 }
 
-export enum CheckPasswordResponse_STATUS {
+export enum CheckTokenResponse_STATUS {
   OK = 0,
   WRONG_PASSWORD = 1,
   NOT_FOUND = 2,
@@ -59,7 +57,7 @@ export interface UserServiceClient {
 
   find(request: FindRequest, metadata?: Metadata): Observable<FindResponse>;
 
-  checkPassword(request: CheckPasswordRequest, metadata?: Metadata): Observable<CheckPasswordResponse>;
+  checkToken(request: CheckTokenRequest, metadata?: Metadata): Observable<CheckTokenResponse>;
 
   register(request: RegisterRequest, metadata?: Metadata): Observable<RegisterResponse>;
 }
@@ -72,10 +70,10 @@ export interface UserServiceController {
 
   find(request: FindRequest, metadata?: Metadata): Promise<FindResponse> | Observable<FindResponse> | FindResponse;
 
-  checkPassword(
-    request: CheckPasswordRequest,
+  checkToken(
+    request: CheckTokenRequest,
     metadata?: Metadata,
-  ): Promise<CheckPasswordResponse> | Observable<CheckPasswordResponse> | CheckPasswordResponse;
+  ): Promise<CheckTokenResponse> | Observable<CheckTokenResponse> | CheckTokenResponse;
 
   register(
     request: RegisterRequest,
@@ -85,7 +83,7 @@ export interface UserServiceController {
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findAll", "find", "checkPassword", "register"];
+    const grpcMethods: string[] = ["findAll", "find", "checkToken", "register"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

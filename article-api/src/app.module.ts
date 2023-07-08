@@ -22,7 +22,7 @@ import { join } from 'path';
             name: USER_SERVICE_NAME,
             transport: Transport.GRPC,
             options: {
-              url: `0.0.0.0:3001`,
+              url: `localhost:4000`,
               package: AUTH_V1ALPHA_PACKAGE_NAME,
               loader: {
                 includeDirs: [join(__dirname, '../proto')],

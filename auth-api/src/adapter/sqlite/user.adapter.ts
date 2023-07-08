@@ -5,6 +5,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as Dto from './dto.user';
 import { PasswordAdapter } from '../password/bcrypt/password.adapter';
 import { PasswordRepository } from 'src/repository/password.repository';
+import { JWTAdapter } from '../jwt/jwt.adapter';
+import { JWTRepository } from 'src/repository/jwt.repository';
 
 @Injectable()
 export class UserSqliteAdapter implements UserRepository {
@@ -12,18 +14,21 @@ export class UserSqliteAdapter implements UserRepository {
     private prisma: PrismaService,
     @Inject(PasswordAdapter)
     private readonly passwordRepository: PasswordRepository,
+    @Inject(JWTAdapter)
+    private readonly tokenRepository: JWTRepository,
   ) {}
 
-  async login(email: string, password: string): Promise<User> {
+  async login(email: string, password: string): Promise<string> {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
           email,
         },
       });
-
       if (this.passwordRepository.match(password, user.password)) {
-        return Dto.toEntities(user);
+        console.log(Dto.toEntities(user));
+
+        return this.tokenRepository.encode(Dto.toEntities(user));
       }
 
       return undefined;
@@ -67,5 +72,10 @@ export class UserSqliteAdapter implements UserRepository {
     } catch {
       return undefined;
     }
+  }
+
+  async checkToken(token: string): Promise<User> {
+    const { id, email } = this.tokenRepository.decode(token);
+    return new User(id, email);
   }
 }

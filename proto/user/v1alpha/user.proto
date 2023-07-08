@@ -5,7 +5,7 @@ package auth.v1alpha;
 service UserService {
   rpc FindAll(FindAllRequest) returns (FindAllResponse);
   rpc Find(FindRequest) returns (FindResponse);
-  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordResponse);
+  rpc CheckToken(CheckTokenRequest) returns (CheckTokenResponse);
   rpc Register(RegisterRequest) returns (RegisterResponse);
 }
 
@@ -38,18 +38,16 @@ message FindResponse {
   User user = 1;
 }
 
-message CheckPasswordRequest {
-  string email = 1;
-  string password = 2;
+message CheckTokenRequest {
+  string token = 1;
 }
 
-message CheckPasswordResponse {
+message CheckTokenResponse {
   enum STATUS {
     OK = 0;
     WRONG_PASSWORD = 1;
     NOT_FOUND = 2;
     INTERNAL = 3;
   }
-  STATUS status = 1;
-  User user = 2;
+  User user = 1;
 }

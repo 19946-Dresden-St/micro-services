@@ -16,3 +16,5 @@ export class User {
     };
   }
 }
+
+export const DummyUser = new User(0, 'john.doe@gmail.com');

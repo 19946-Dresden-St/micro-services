@@ -9,6 +9,7 @@ import {
 import { UserRepository } from 'src/repository/user.repository';
 import { Article } from 'src/entities/article';
 import { GrpcUserAdapter } from '../grpc/user.adapter';
+import { DummyUser } from 'src/entities/user';
 
 @Injectable()
 export class ArticleSqliteAdapter implements ArticleRepository {
@@ -18,11 +19,37 @@ export class ArticleSqliteAdapter implements ArticleRepository {
     private readonly userRepository: UserRepository,
   ) {}
 
+  private async getArticleByTitle(title: string): Promise<Article | undefined> {
+    const article = await this.prisma.article.findFirst({
+      where: {
+        title,
+      },
+    });
+
+    if (!article) {
+      return undefined;
+    }
+
+    const user = await this.userRepository.getUserById(article.userId);
+
+    if (!user) {
+      return undefined;
+    }
+
+    return Dto.toEntities(article, user);
+  }
+
   async getArticles(): Promise<Article[]> {
     const articles = await this.prisma.article.findMany();
     return Promise.all(
       articles.map(async (article) => {
-        const user = await this.userRepository.getUserById(article.userId);
+        const user = await this.userRepository
+          .getUserById(article.userId)
+          .catch((err) => console.log(err));
+
+        if (!user) {
+          return Dto.toEntities(article, DummyUser);
+        }
 
         return Dto.toEntities(article, user);
       }),
@@ -32,9 +59,17 @@ export class ArticleSqliteAdapter implements ArticleRepository {
   async createArticle({
     title,
     description,
-    user,
+    token,
   }: CreateArticle): Promise<Article | undefined> {
     try {
+      const existArticle = await this.getArticleByTitle(title);
+
+      if (existArticle) {
+        return undefined;
+      }
+
+      const user = await this.userRepository.getUserWithToken(token);
+
       const article = await this.prisma.article.create({
         data: {
           title,
