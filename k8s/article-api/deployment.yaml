@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: article-api
+  name: article-api
+spec:
+  selector:
+    matchLabels:
+      app: article-api
+  template:
+    metadata:
+      labels:
+        app: article-api
+    spec:
+      imagePullSecrets:
+        - name: ovh-registry-secret
+      containers:
+      - name: article-api
+        image: yb1gz3c2.gra7.container-registry.ovh.net/hubvisor/cookie-sync:1.6.0-7134-gb0878a3b3
+        resources:
+          requests:
+            cpu: "128m"
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            port: 3000
+            path: /
+      terminationGracePeriodSeconds: 60
+  minReadySeconds: 60

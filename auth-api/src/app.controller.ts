@@ -10,6 +10,15 @@ import {
 import { User } from './entities/user';
 import { UserRepository } from './repository/user.repository';
 import { UserSqliteAdapter } from './adapter/sqlite/user.adapter';
+import { GrpcMethod } from '@nestjs/microservices';
+import {
+  CheckTokenRequest,
+  CheckTokenResponse,
+  FindAllResponse,
+  FindRequest,
+  FindResponse,
+  USER_SERVICE_NAME,
+} from './stubs/user/v1alpha/user';
 
 @Controller('/user')
 export class AppController {
@@ -18,21 +27,25 @@ export class AppController {
     private readonly userService: UserRepository,
   ) {}
 
-  @Get()
-  async getUsers(): Promise<User[]> {
-    return this.userService.getUsers();
+  @GrpcMethod(USER_SERVICE_NAME, 'FindAll')
+  async getUsers(): Promise<FindAllResponse> {
+    return {
+      users: (await this.userService.getUsers()).map((user) => user.toJSON()),
+    };
   }
 
-  @Get('/:id')
-  async getUser(@Param('id') id): Promise<User> {
-    return this.userService.getUserById(id);
+  @GrpcMethod(USER_SERVICE_NAME, 'Find')
+  async getUser({ id }: FindRequest): Promise<FindResponse> {
+    return {
+      user: (await this.userService.getUserById(id)).toJSON(),
+    };
   }
 
   @Post('/login')
   @HttpCode(200)
   async login(
     @Body() { email, password }: { email: string; password: string },
-  ): Promise<User> {
+  ): Promise<string> {
     return this.userService.login(email, password);
   }
 
@@ -41,5 +54,13 @@ export class AppController {
     @Body() { email, password }: { email: string; password: string },
   ): Promise<User> {
     return this.userService.createUser(email, password);
+  }
+
+  // @Post('/test')
+  @GrpcMethod(USER_SERVICE_NAME, 'CheckToken')
+  async checkToken({ token }: CheckTokenRequest): Promise<CheckTokenResponse> {
+    return {
+      user: (await this.userService.checkToken(token)).toJSON(),
+    };
   }
 }

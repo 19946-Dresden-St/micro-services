@@ -1,5 +1,4 @@
 import { Article } from 'src/entities/article';
-import { User } from 'src/entities/user';
 
 export interface ArticleRepository {
   getArticles(): Promise<Article[]>;
@@ -12,5 +11,5 @@ export interface CreateArticle {
   title: string;
   description: string;
 
-  user: User;
+  token: string;
 }
