@@ -64,7 +64,7 @@ resource "ovh_cloud_project_kube_nodepool" "node_pool" {
   kube_id       = ovh_cloud_project_kube.ovh_cluster.id
   name          = "node-pool"
   flavor_name   = "d2-4"
-  desired_nodes = 1
+  desired_nodes = 2
   max_nodes     = 3
   min_nodes     = 1
 

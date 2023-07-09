@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: global-ingress
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - article.antoinelorin.fr
+      - auth.antoinelorin.fr
+      secretName: certificates
+  rules:
+  - host: "article.antoinelorin.fr"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: article-api-svc
+              port:
+                number: 3000
+  - host: "auth.antoinelorin.fr"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: auth-api-svc
+              port:
+                number: 4001
